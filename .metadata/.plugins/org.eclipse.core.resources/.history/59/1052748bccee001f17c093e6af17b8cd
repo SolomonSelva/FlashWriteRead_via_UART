@@ -1,0 +1,6 @@
+../Drivers/CMSIS/Include/core_cm7.h:2229:22:SCB_EnableICache	1
+../Drivers/CMSIS/Include/core_cm7.h:2281:22:SCB_EnableDCache	3
+../Core/Src/flash_store_data.c:71:6:Erase_And_Write	7
+../Core/Src/flash_store_data.c:207:17:GetSector	23
+../Core/Src/flash_store_data.c:324:13:MPU_Config	1
+../Core/Src/flash_store_data.c:375:13:CPU_CACHE_Enable	1

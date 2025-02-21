@@ -1,0 +1,13 @@
+/*
+ * flash_store_data.h
+ *
+ *  Created on: Feb 19, 2025
+ *      Author: solom
+ */
+
+#ifndef INC_FLASH_STORE_DATA_H_
+#define INC_FLASH_STORE_DATA_H_
+
+
+
+#endif /* INC_FLASH_STORE_DATA_H_ */

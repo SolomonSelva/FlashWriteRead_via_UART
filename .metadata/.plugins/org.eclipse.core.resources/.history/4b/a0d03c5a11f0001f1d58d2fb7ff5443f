@@ -1,0 +1,3 @@
+../Core/Src/flash_store_data.c:27:6:Flash_Erase	16	static
+../Core/Src/flash_store_data.c:70:6:Flash_Read_String	32	static
+../Core/Src/flash_store_data.c:86:17:GetSector	24	static
