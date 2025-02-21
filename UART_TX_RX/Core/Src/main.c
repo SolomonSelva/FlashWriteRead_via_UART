@@ -105,6 +105,9 @@ static void MX_USART3_UART_Init(void);
 static void MX_USB_OTG_FS_PCD_Init(void);
 /* USER CODE BEGIN PFP */
 
+void CalculateDataRate(void);
+void ReadFlashAndSendData(void);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -162,60 +165,10 @@ int main(void)
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
-		elapsedTime = HAL_GetTick() - startTime;  // Time elapsed in ms
 
-		if (elapsedTime >= 1000) {  // Every 1 second
-			// Calculate RX Speed
-			uint32_t RxBitsTransferred = ByteRxCount * 8;
-			uint32_t RxBps = RxBitsTransferred * 1000 / elapsedTime;
-			printf("RX Data Rate: %lu bps\n", RxBps);
+		CalculateDataRate();
 
-			// Calculate TX Speed
-			uint32_t TxBitsTransferred = ByteTxCount * 8;
-			uint32_t TxBps = TxBitsTransferred * 1000 / elapsedTime;
-			printf("TX Data Rate: %lu bps\n", TxBps);
-
-			// Reset counters for the next interval
-			ByteRxCount = 0;
-			ByteTxCount = 0;
-			startTime = HAL_GetTick();
-		}
-
-		if (dataReceived) {
-			printf("Reading back from Flash...\n");
-
-			// Reset Flash address for reading
-			uint32_t readAddress = FLASH_USER_START_ADDR;
-
-			// Read data from Flash until null character or max buffer size
-			for (int i = 0; i < BUFFER_SIZE - 1; i++) {
-				readBuffer[i] = *(char *)readAddress;
-				readAddress++;
-
-				// Stop if null character is encountered
-				if (readBuffer[i] == '\0') {
-					break;
-				}
-			}
-
-			// Null-terminate the read string
-			readBuffer[BUFFER_SIZE - 1] = '\0';
-
-			// Send the read data back to PC
-			printf("Sending back data to PC...\n");
-			HAL_UART_Transmit(&huart3, (uint8_t *)readBuffer, strlen(readBuffer), HAL_MAX_DELAY);
-			ByteTxCount += strlen(readBuffer);  // Increment TX count by the number of bytes transmitted
-
-			// Reset for the next transmission
-			dataReceived = 0;
-			flashAddress = FLASH_USER_START_ADDR;  // Reset flash address for next write
-			byteCount = 0;
-			wordBuffer = 0;
-			rxIndex = 0;
-			memset(rxBuffer, 0, sizeof(rxBuffer));
-			memset(readBuffer, 0, sizeof(readBuffer));
-
-		}
+		ReadFlashAndSendData();
 
 		/* USER CODE END 3 */
 	}
@@ -490,6 +443,67 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 			rxIndex = 0;
 
 		HAL_UART_Receive_IT(&huart3, (uint8_t *)&rxBuffer[rxIndex], 1);
+	}
+}
+
+void CalculateDataRate(void)
+{
+	elapsedTime = HAL_GetTick() - startTime;  // Time elapsed in ms
+
+	if (elapsedTime >= 1000) {  // Every 1 second
+		// Calculate RX Speed
+		uint32_t RxBitsTransferred = ByteRxCount * 8;
+		uint32_t RxBps = RxBitsTransferred * 1000 / elapsedTime;
+		printf("RX Data Rate: %lu bps\n", RxBps);
+
+		// Calculate TX Speed
+		uint32_t TxBitsTransferred = ByteTxCount * 8;
+		uint32_t TxBps = TxBitsTransferred * 1000 / elapsedTime;
+		printf("TX Data Rate: %lu bps\n", TxBps);
+
+		// Reset counters for the next interval
+		ByteRxCount = 0;
+		ByteTxCount = 0;
+		startTime = HAL_GetTick();
+	}
+}
+
+void ReadFlashAndSendData (void)
+{
+	if (dataReceived) {
+		printf("Reading back from Flash...\n");
+
+		// Reset Flash address for reading
+		uint32_t readAddress = FLASH_USER_START_ADDR;
+
+		// Read data from Flash until null character or max buffer size
+		for (int i = 0; i < BUFFER_SIZE - 1; i++) {
+			readBuffer[i] = *(char *)readAddress;
+			readAddress++;
+
+			// Stop if null character is encountered
+			if (readBuffer[i] == '\0') {
+				break;
+			}
+		}
+
+		// Null-terminate the read string
+		readBuffer[BUFFER_SIZE - 1] = '\0';
+
+		// Send the read data back to PC
+		printf("Sending back data to PC...\n");
+		HAL_UART_Transmit(&huart3, (uint8_t *)readBuffer, strlen(readBuffer), HAL_MAX_DELAY);
+		ByteTxCount += strlen(readBuffer);  // Increment TX count by the number of bytes transmitted
+
+		// Reset for the next transmission
+		dataReceived = 0;
+		flashAddress = FLASH_USER_START_ADDR;  // Reset flash address for next write
+		byteCount = 0;
+		wordBuffer = 0;
+		rxIndex = 0;
+		memset(rxBuffer, 0, sizeof(rxBuffer));
+		memset(readBuffer, 0, sizeof(readBuffer));
+
 	}
 }
 
