@@ -13,16 +13,28 @@ This project demonstrates UART-based data communication between a PC and an STM3
 **Project Structure**
 
 ├── Core
-│   ├── Src
-│   │   ├── main.c         # Main application code
-│   │   └── stm32xxxx_it.c # Interrupt Service Routines
-|   |   └── flash_store_data.c # Code for Erase and Sector identification
-│   └── Inc
-│       └── main.h         # Header file with definitions and prototypes
-|       └──flash_store_data.h
-├── PC_Side
-│   └── UART_TX_Application.py # Python script for PC-side UART communication
+
+│     ├── Src
+
+│     │     ├── main.c         # Main application code
+
+│     │     └── stm32xxxx_it.c # Interrupt Service Routines
+
+|     |     └── flash_store_data.c # Code for Erase and Sector identification
+
+│     └── Inc
+
+│         └── main.h         # Header file with definitions and prototypes
+
+|         └──flash_store_data.h
+
+├──   PC_Side
+
+│     └── UART_TX_Application.py # Python script for PC-side UART communication
+
 └── README.md
+
+
 
 **Hardware Requirements**
 
